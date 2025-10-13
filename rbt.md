@@ -732,8 +732,12 @@ struct Node {
 };
 
 class RedBlackTree {
-private:
+public:
 	Node* root;
+
+	RedBlackTree() {
+		root = nullptr;
+	}
 
 	void rotateLeft(Node* &root, Node* &node) {
 		Node* rightChild = node->right;
@@ -1182,11 +1186,6 @@ private:
 		currentPath.pop_back();
 	}
 
-public:
-	RedBlackTree() {
-		root = nullptr;
-	}
-
 	void insert(int data) {
 		Node* node = new Node(data);
 		root = BSTInsert(root, node);
@@ -1397,8 +1396,11 @@ public:
 				q.pop();
 
 				if (node != nullptr) {
-					int blackHeight = getBlackHeightFromRoot(root, node, 0);
-					cout << node->data << "(" << (node->color == RED ? "R" : "B") << ")" << blackHeight;
+					cout << node->data << "(" << (node->color == RED ? "R" : "B") << ")";
+					if (node->color == BLACK) {
+						int blackHeight = getBlackHeightFromRoot(root, node, 0);
+						cout << blackHeight;
+					}
 					q.push(node->left);
 					q.push(node->right);
 				} else {
