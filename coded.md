@@ -5630,3 +5630,776 @@ int main() {
     
     return 0;
 }
+
+
+-------------------------------------
+--------------linkedliststackqueue----------------------
+------------------------------------
+
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+class StackLL {
+public:
+    Node* top;
+    
+    StackLL() {
+        top = NULL;
+    }
+    
+    void push(int val) {
+        Node* newNode = new Node();
+        newNode->data = val;
+        newNode->next = top;
+        top = newNode;
+        cout << val << " pushed to stack" << endl;
+    }
+    
+    int pop() {
+        if (top == NULL) {
+            cout << "Stack underflow" << endl;
+            return -1;
+        }
+        Node* temp = top;
+        int val = temp->data;
+        top = top->next;
+        delete temp;
+        return val;
+    }
+    
+    int peek() {
+        if (top == NULL) {
+            cout << "Stack is empty" << endl;
+            return -1;
+        }
+        return top->data;
+    }
+    
+    void display() {
+        if (top == NULL) {
+            cout << "Stack is empty" << endl;
+            return;
+        }
+        Node* temp = top;
+        cout << "Stack: ";
+        while (temp != NULL) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+    
+    bool isEmpty() {
+        return top == NULL;
+    }
+};
+
+class QueueLL {
+public:
+    Node* front;
+    Node* rear;
+    
+    QueueLL() {
+        front = NULL;
+        rear = NULL;
+    }
+    
+    void enqueue(int val) {
+        Node* newNode = new Node();
+        newNode->data = val;
+        newNode->next = NULL;
+        
+        if (rear == NULL) {
+            front = rear = newNode;
+        } else {
+            rear->next = newNode;
+            rear = newNode;
+        }
+        cout << val << " enqueued to queue" << endl;
+    }
+    
+    int dequeue() {
+        if (front == NULL) {
+            cout << "Queue underflow" << endl;
+            return -1;
+        }
+        Node* temp = front;
+        int val = temp->data;
+        front = front->next;
+        
+        if (front == NULL) {
+            rear = NULL;
+        }
+        
+        delete temp;
+        return val;
+    }
+    
+    int peek() {
+        if (front == NULL) {
+            cout << "Queue is empty" << endl;
+            return -1;
+        }
+        return front->data;
+    }
+    
+    void display() {
+        if (front == NULL) {
+            cout << "Queue is empty" << endl;
+            return;
+        }
+        Node* temp = front;
+        cout << "Queue: ";
+        while (temp != NULL) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+    
+    bool isEmpty() {
+        return front == NULL;
+    }
+};
+
+class CircularQueueLL {
+public:
+    Node* front;
+    Node* rear;
+    int maxSize;
+    int currentSize;
+    
+    CircularQueueLL(int size = 100) {
+        front = NULL;
+        rear = NULL;
+        maxSize = size;
+        currentSize = 0;
+    }
+    
+    void enqueue(int val) {
+        if (currentSize == maxSize) {
+            cout << "Circular queue is full" << endl;
+            return;
+        }
+        
+        Node* newNode = new Node();
+        newNode->data = val;
+        newNode->next = NULL;
+        
+        if (rear == NULL) {
+            front = rear = newNode;
+        } else {
+            rear->next = newNode;
+            rear = newNode;
+        }
+        
+        currentSize++;
+        cout << val << " enqueued to circular queue" << endl;
+    }
+    
+    int dequeue() {
+        if (currentSize == 0) {
+            cout << "Circular queue underflow" << endl;
+            return -1;
+        }
+        
+        Node* temp = front;
+        int val = temp->data;
+        front = front->next;
+        
+        if (front == NULL) {
+            rear = NULL;
+        }
+        
+        delete temp;
+        currentSize--;
+        return val;
+    }
+    
+    int peek() {
+        if (currentSize == 0) {
+            cout << "Circular queue is empty" << endl;
+            return -1;
+        }
+        return front->data;
+    }
+    
+    void display() {
+        if (currentSize == 0) {
+            cout << "Circular queue is empty" << endl;
+            return;
+        }
+        
+        Node* temp = front;
+        cout << "Circular Queue: ";
+        while (temp != NULL) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+    
+    bool isEmpty() {
+        return currentSize == 0;
+    }
+    
+    bool isFull() {
+        return currentSize == maxSize;
+    }
+};
+
+class StackUsingQueue {
+public:
+    QueueLL q1;
+    QueueLL q2;
+    
+    void push(int val) {
+        q2.enqueue(val);
+        
+        while (!q1.isEmpty()) {
+            q2.enqueue(q1.dequeue());
+        }
+        
+        QueueLL temp = q1;
+        q1 = q2;
+        q2 = temp;
+        
+        cout << val << " pushed to stack using queue" << endl;
+    }
+    
+    int pop() {
+        if (q1.isEmpty()) {
+            cout << "Stack underflow" << endl;
+            return -1;
+        }
+        return q1.dequeue();
+    }
+    
+    int peek() {
+        return q1.peek();
+    }
+    
+    void display() {
+        q1.display();
+    }
+};
+
+class QueueUsingStack {
+public:
+    StackLL s1;
+    StackLL s2;
+    
+    void enqueue(int val) {
+        s1.push(val);
+        cout << val << " enqueued to queue using stack" << endl;
+    }
+    
+    int dequeue() {
+        if (s1.isEmpty() && s2.isEmpty()) {
+            cout << "Queue underflow" << endl;
+            return -1;
+        }
+        
+        if (s2.isEmpty()) {
+            while (!s1.isEmpty()) {
+                s2.push(s1.pop());
+            }
+        }
+        
+        return s2.pop();
+    }
+    
+    int peek() {
+        if (s1.isEmpty() && s2.isEmpty()) {
+            cout << "Queue is empty" << endl;
+            return -1;
+        }
+        
+        if (s2.isEmpty()) {
+            while (!s1.isEmpty()) {
+                s2.push(s1.pop());
+            }
+        }
+        
+        return s2.peek();
+    }
+    
+    void display() {
+        if (s1.isEmpty() && s2.isEmpty()) {
+            cout << "Queue is empty" << endl;
+            return;
+        }
+        
+        cout << "Queue using stack: ";
+        
+        StackLL tempS2 = s2;
+        Node* temp2 = tempS2.top;
+        while (temp2 != NULL) {
+            cout << temp2->data << " ";
+            temp2 = temp2->next;
+        }
+        
+        StackLL tempS1;
+        Node* temp1 = s1.top;
+        while (temp1 != NULL) {
+            tempS1.push(temp1->data);
+            temp1 = temp1->next;
+        }
+        
+        temp1 = tempS1.top;
+        while (temp1 != NULL) {
+            cout << temp1->data << " ";
+            temp1 = temp1->next;
+        }
+        cout << endl;
+    }
+};
+
+class CircularQueueUsingStack {
+public:
+    StackLL s1;
+    StackLL s2;
+    int maxSize;
+    int currentSize;
+    
+    CircularQueueUsingStack(int size = 100) {
+        maxSize = size;
+        currentSize = 0;
+    }
+    
+    void enqueue(int val) {
+        if (currentSize >= maxSize) {
+            cout << "Circular queue is full" << endl;
+            return;
+        }
+        
+        s1.push(val);
+        currentSize++;
+        cout << val << " enqueued to circular queue using stack" << endl;
+    }
+    
+    int dequeue() {
+        if (currentSize == 0) {
+            cout << "Circular queue underflow" << endl;
+            return -1;
+        }
+        
+        if (s2.isEmpty()) {
+            while (!s1.isEmpty()) {
+                s2.push(s1.pop());
+            }
+        }
+        
+        currentSize--;
+        return s2.pop();
+    }
+    
+    int peek() {
+        if (currentSize == 0) {
+            cout << "Circular queue is empty" << endl;
+            return -1;
+        }
+        
+        if (s2.isEmpty()) {
+            while (!s1.isEmpty()) {
+                s2.push(s1.pop());
+            }
+        }
+        
+        return s2.peek();
+    }
+    
+    void display() {
+        if (currentSize == 0) {
+            cout << "Circular queue is empty" << endl;
+            return;
+        }
+        
+        cout << "Circular Queue using stack: ";
+        
+        StackLL tempS2 = s2;
+        Node* temp2 = tempS2.top;
+        while (temp2 != NULL) {
+            cout << temp2->data << " ";
+            temp2 = temp2->next;
+        }
+        
+        StackLL tempS1;
+        Node* temp1 = s1.top;
+        while (temp1 != NULL) {
+            tempS1.push(temp1->data);
+            temp1 = temp1->next;
+        }
+        
+        temp1 = tempS1.top;
+        while (temp1 != NULL) {
+            cout << temp1->data << " ";
+            temp1 = temp1->next;
+        }
+        cout << endl;
+    }
+};
+
+class CircularQueueUsingQueue {
+public:
+    QueueLL q;
+    int maxSize;
+    int currentSize;
+    
+    CircularQueueUsingQueue(int size = 100) {
+        maxSize = size;
+        currentSize = 0;
+    }
+    
+    void enqueue(int val) {
+        if (currentSize >= maxSize) {
+            cout << "Circular queue is full" << endl;
+            return;
+        }
+        
+        q.enqueue(val);
+        currentSize++;
+        cout << val << " enqueued to circular queue using queue" << endl;
+    }
+    
+    int dequeue() {
+        if (currentSize == 0) {
+            cout << "Circular queue underflow" << endl;
+            return -1;
+        }
+        
+        currentSize--;
+        return q.dequeue();
+    }
+    
+    int peek() {
+        if (currentSize == 0) {
+            cout << "Circular queue is empty" << endl;
+            return -1;
+        }
+        
+        return q.peek();
+    }
+    
+    void display() {
+        if (currentSize == 0) {
+            cout << "Circular queue is empty" << endl;
+            return;
+        }
+        q.display();
+    }
+};
+
+int main() {
+    int choice, val, subChoice, size;
+    
+    StackLL stack;
+    QueueLL queue;
+    CircularQueueLL* circularQueue = NULL;
+    StackUsingQueue stackUsingQueue;
+    QueueUsingStack queueUsingStack;
+    CircularQueueUsingStack* circularQueueUsingStack = NULL;
+    CircularQueueUsingQueue* circularQueueUsingQueue = NULL;
+    
+    while (true) {
+        cout << "\n=== Data Structure Implementations ===" << endl;
+        cout << "1. Stack (Linked List)" << endl;
+        cout << "2. Queue (Linked List)" << endl;
+        cout << "3. Circular Queue (Linked List)" << endl;
+        cout << "4. Stack Using Queue" << endl;
+        cout << "5. Queue Using Stack" << endl;
+        cout << "6. Circular Queue Using Stack" << endl;
+        cout << "7. Circular Queue Using Queue" << endl;
+        cout << "8. Exit" << endl;
+        cout << "Choice: ";
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                while (true) {
+                    cout << "\n--- Stack Operations ---" << endl;
+                    cout << "1. Push" << endl;
+                    cout << "2. Pop" << endl;
+                    cout << "3. Peek" << endl;
+                    cout << "4. Display" << endl;
+                    cout << "5. Back" << endl;
+                    cout << "Choice: ";
+                    cin >> subChoice;
+                    
+                    if (subChoice == 5) break;
+                    
+                    switch (subChoice) {
+                        case 1:
+                            cout << "Value: ";
+                            cin >> val;
+                            stack.push(val);
+                            break;
+                        case 2:
+                            val = stack.pop();
+                            if (val != -1) cout << "Popped: " << val << endl;
+                            break;
+                        case 3:
+                            val = stack.peek();
+                            if (val != -1) cout << "Top: " << val << endl;
+                            break;
+                        case 4:
+                            stack.display();
+                            break;
+                        default:
+                            cout << "Invalid choice" << endl;
+                    }
+                }
+                break;
+                
+            case 2:
+                while (true) {
+                    cout << "\n--- Queue Operations ---" << endl;
+                    cout << "1. Enqueue" << endl;
+                    cout << "2. Dequeue" << endl;
+                    cout << "3. Peek" << endl;
+                    cout << "4. Display" << endl;
+                    cout << "5. Back" << endl;
+                    cout << "Choice: ";
+                    cin >> subChoice;
+                    
+                    if (subChoice == 5) break;
+                    
+                    switch (subChoice) {
+                        case 1:
+                            cout << "Value: ";
+                            cin >> val;
+                            queue.enqueue(val);
+                            break;
+                        case 2:
+                            val = queue.dequeue();
+                            if (val != -1) cout << "Dequeued: " << val << endl;
+                            break;
+                        case 3:
+                            val = queue.peek();
+                            if (val != -1) cout << "Front: " << val << endl;
+                            break;
+                        case 4:
+                            queue.display();
+                            break;
+                        default:
+                            cout << "Invalid choice" << endl;
+                    }
+                }
+                break;
+                
+            case 3:
+                if (circularQueue == NULL) {
+                    cout << "Enter max size: ";
+                    cin >> size;
+                    circularQueue = new CircularQueueLL(size);
+                }
+                
+                while (true) {
+                    cout << "\n--- Circular Queue Operations ---" << endl;
+                    cout << "1. Enqueue" << endl;
+                    cout << "2. Dequeue" << endl;
+                    cout << "3. Peek" << endl;
+                    cout << "4. Display" << endl;
+                    cout << "5. Back" << endl;
+                    cout << "Choice: ";
+                    cin >> subChoice;
+                    
+                    if (subChoice == 5) break;
+                    
+                    switch (subChoice) {
+                        case 1:
+                            cout << "Value: ";
+                            cin >> val;
+                            circularQueue->enqueue(val);
+                            break;
+                        case 2:
+                            val = circularQueue->dequeue();
+                            if (val != -1) cout << "Dequeued: " << val << endl;
+                            break;
+                        case 3:
+                            val = circularQueue->peek();
+                            if (val != -1) cout << "Front: " << val << endl;
+                            break;
+                        case 4:
+                            circularQueue->display();
+                            break;
+                        default:
+                            cout << "Invalid choice" << endl;
+                    }
+                }
+                break;
+                
+            case 4:
+                while (true) {
+                    cout << "\n--- Stack Using Queue Operations ---" << endl;
+                    cout << "1. Push" << endl;
+                    cout << "2. Pop" << endl;
+                    cout << "3. Peek" << endl;
+                    cout << "4. Display" << endl;
+                    cout << "5. Back" << endl;
+                    cout << "Choice: ";
+                    cin >> subChoice;
+                    
+                    if (subChoice == 5) break;
+                    
+                    switch (subChoice) {
+                        case 1:
+                            cout << "Value: ";
+                            cin >> val;
+                            stackUsingQueue.push(val);
+                            break;
+                        case 2:
+                            val = stackUsingQueue.pop();
+                            if (val != -1) cout << "Popped: " << val << endl;
+                            break;
+                        case 3:
+                            val = stackUsingQueue.peek();
+                            if (val != -1) cout << "Top: " << val << endl;
+                            break;
+                        case 4:
+                            stackUsingQueue.display();
+                            break;
+                        default:
+                            cout << "Invalid choice" << endl;
+                    }
+                }
+                break;
+                
+            case 5:
+                while (true) {
+                    cout << "\n--- Queue Using Stack Operations ---" << endl;
+                    cout << "1. Enqueue" << endl;
+                    cout << "2. Dequeue" << endl;
+                    cout << "3. Peek" << endl;
+                    cout << "4. Display" << endl;
+                    cout << "5. Back" << endl;
+                    cout << "Choice: ";
+                    cin >> subChoice;
+                    
+                    if (subChoice == 5) break;
+                    
+                    switch (subChoice) {
+                        case 1:
+                            cout << "Value: ";
+                            cin >> val;
+                            queueUsingStack.enqueue(val);
+                            break;
+                        case 2:
+                            val = queueUsingStack.dequeue();
+                            if (val != -1) cout << "Dequeued: " << val << endl;
+                            break;
+                        case 3:
+                            val = queueUsingStack.peek();
+                            if (val != -1) cout << "Front: " << val << endl;
+                            break;
+                        case 4:
+                            queueUsingStack.display();
+                            break;
+                        default:
+                            cout << "Invalid choice" << endl;
+                    }
+                }
+                break;
+                
+            case 6:
+                if (circularQueueUsingStack == NULL) {
+                    cout << "Enter max size: ";
+                    cin >> size;
+                    circularQueueUsingStack = new CircularQueueUsingStack(size);
+                }
+                
+                while (true) {
+                    cout << "\n--- Circular Queue Using Stack Operations ---" << endl;
+                    cout << "1. Enqueue" << endl;
+                    cout << "2. Dequeue" << endl;
+                    cout << "3. Peek" << endl;
+                    cout << "4. Display" << endl;
+                    cout << "5. Back" << endl;
+                    cout << "Choice: ";
+                    cin >> subChoice;
+                    
+                    if (subChoice == 5) break;
+                    
+                    switch (subChoice) {
+                        case 1:
+                            cout << "Value: ";
+                            cin >> val;
+                            circularQueueUsingStack->enqueue(val);
+                            break;
+                        case 2:
+                            val = circularQueueUsingStack->dequeue();
+                            if (val != -1) cout << "Dequeued: " << val << endl;
+                            break;
+                        case 3:
+                            val = circularQueueUsingStack->peek();
+                            if (val != -1) cout << "Front: " << val << endl;
+                            break;
+                        case 4:
+                            circularQueueUsingStack->display();
+                            break;
+                        default:
+                            cout << "Invalid choice" << endl;
+                    }
+                }
+                break;
+                
+            case 7:
+                if (circularQueueUsingQueue == NULL) {
+                    cout << "Enter max size: ";
+                    cin >> size;
+                    circularQueueUsingQueue = new CircularQueueUsingQueue(size);
+                }
+                
+                while (true) {
+                    cout << "\n--- Circular Queue Using Queue Operations ---" << endl;
+                    cout << "1. Enqueue" << endl;
+                    cout << "2. Dequeue" << endl;
+                    cout << "3. Peek" << endl;
+                    cout << "4. Display" << endl;
+                    cout << "5. Back" << endl;
+                    cout << "Choice: ";
+                    cin >> subChoice;
+                    
+                    if (subChoice == 5) break;
+                    
+                    switch (subChoice) {
+                        case 1:
+                            cout << "Value: ";
+                            cin >> val;
+                            circularQueueUsingQueue->enqueue(val);
+                            break;
+                        case 2:
+                            val = circularQueueUsingQueue->dequeue();
+                            if (val != -1) cout << "Dequeued: " << val << endl;
+                            break;
+                        case 3:
+                            val = circularQueueUsingQueue->peek();
+                            if (val != -1) cout << "Front: " << val << endl;
+                            break;
+                        case 4:
+                            circularQueueUsingQueue->display();
+                            break;
+                        default:
+                            cout << "Invalid choice" << endl;
+                    }
+                }
+                break;
+                
+            case 8:
+                if (circularQueue != NULL) delete circularQueue;
+                if (circularQueueUsingStack != NULL) delete circularQueueUsingStack;
+                if (circularQueueUsingQueue != NULL) delete circularQueueUsingQueue;
+                return 0;
+                
+            default:
+                cout << "Invalid choice" << endl;
+        }
+    }
+    
+    return 0;
+}
