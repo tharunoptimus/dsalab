@@ -747,11 +747,11 @@ int main() {
     
     return 0;
 }
-```
+
+
+-------------AVL--------------
 ------------------------------
--------------AVL-----------------
-------------------------------
-------------------------------
+
 
 #include <iostream>
 #include <algorithm>
@@ -1459,14 +1459,9 @@ int main() {
 }
 
 
+---------------HEAP-----------------
 ------------------------------------
----------------HEAP----------------------
--------------------------------------
--------------------------------------
 
-# Heap Operations - Min and Max Heap (Complete)
-
-```cpp
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -2236,10 +2231,9 @@ int main() {
     return 0;
 }
 
-------------------------------------
----------------minmaxheap----------------------
--------------------------------------
--------------------------------------
+
+-------------MINMAXHEAP------------
+-----------------------------------
 
 #include <iostream>
 #include <vector>
@@ -2489,9 +2483,7 @@ int main() {
 }
 
 
--------------------------------------
---------------SQCQ-------------------
--------------------------------------
+--------------SQCQINLL-----------------
 -------------------------------------
 
 #include <iostream>
@@ -2627,72 +2619,87 @@ public:
 
 class CircularQueueLL {
 public:
+    Node* front;
     Node* rear;
+    int maxSize;
+    int currentSize;
     
-    CircularQueueLL() {
+    CircularQueueLL(int size = 100) {
+        front = NULL;
         rear = NULL;
+        maxSize = size;
+        currentSize = 0;
     }
     
     void enqueue(int val) {
+        if (currentSize == maxSize) {
+            cout << "Circular queue is full" << endl;
+            return;
+        }
+        
         Node* newNode = new Node();
         newNode->data = val;
+        newNode->next = NULL;
         
         if (rear == NULL) {
-            rear = newNode;
-            rear->next = rear;
+            front = rear = newNode;
         } else {
-            newNode->next = rear->next;
             rear->next = newNode;
             rear = newNode;
         }
+        
+        currentSize++;
         cout << val << " enqueued to circular queue" << endl;
     }
     
     int dequeue() {
-        if (rear == NULL) {
+        if (currentSize == 0) {
             cout << "Circular queue underflow" << endl;
             return -1;
         }
         
-        Node* front = rear->next;
-        int val = front->data;
+        Node* temp = front;
+        int val = temp->data;
+        front = front->next;
         
-        if (rear == front) {
-            delete rear;
+        if (front == NULL) {
             rear = NULL;
-        } else {
-            rear->next = front->next;
-            delete front;
         }
         
+        delete temp;
+        currentSize--;
         return val;
     }
     
     int peek() {
-        if (rear == NULL) {
+        if (currentSize == 0) {
             cout << "Circular queue is empty" << endl;
             return -1;
         }
-        return rear->next->data;
+        return front->data;
     }
     
     void display() {
-        if (rear == NULL) {
+        if (currentSize == 0) {
             cout << "Circular queue is empty" << endl;
             return;
         }
         
-        Node* temp = rear->next;
+        Node* temp = front;
         cout << "Circular Queue: ";
-        do {
+        while (temp != NULL) {
             cout << temp->data << " ";
             temp = temp->next;
-        } while (temp != rear->next);
+        }
         cout << endl;
     }
     
     bool isEmpty() {
-        return rear == NULL;
+        return currentSize == 0;
+    }
+    
+    bool isFull() {
+        return currentSize == maxSize;
     }
 };
 
@@ -2943,7 +2950,7 @@ int main() {
     
     StackLL stack;
     QueueLL queue;
-    CircularQueueLL circularQueue;
+    CircularQueueLL* circularQueue = NULL;
     StackUsingQueue stackUsingQueue;
     QueueUsingStack queueUsingStack;
     CircularQueueUsingStack* circularQueueUsingStack = NULL;
@@ -3036,6 +3043,12 @@ int main() {
                 break;
                 
             case 3:
+                if (circularQueue == NULL) {
+                    cout << "Enter max size: ";
+                    cin >> size;
+                    circularQueue = new CircularQueueLL(size);
+                }
+                
                 while (true) {
                     cout << "\n--- Circular Queue Operations ---" << endl;
                     cout << "1. Enqueue" << endl;
@@ -3052,18 +3065,18 @@ int main() {
                         case 1:
                             cout << "Value: ";
                             cin >> val;
-                            circularQueue.enqueue(val);
+                            circularQueue->enqueue(val);
                             break;
                         case 2:
-                            val = circularQueue.dequeue();
+                            val = circularQueue->dequeue();
                             if (val != -1) cout << "Dequeued: " << val << endl;
                             break;
                         case 3:
-                            val = circularQueue.peek();
+                            val = circularQueue->peek();
                             if (val != -1) cout << "Front: " << val << endl;
                             break;
                         case 4:
-                            circularQueue.display();
+                            circularQueue->display();
                             break;
                         default:
                             cout << "Invalid choice" << endl;
@@ -3228,6 +3241,7 @@ int main() {
                 break;
                 
             case 8:
+                if (circularQueue != NULL) delete circularQueue;
                 if (circularQueueUsingStack != NULL) delete circularQueueUsingStack;
                 if (circularQueueUsingQueue != NULL) delete circularQueueUsingQueue;
                 return 0;
@@ -3241,10 +3255,9 @@ int main() {
 }
 
 
-------------------------------------
--------LinkedList--------------------
+------------LINKEDLIST---------------
 -------------------------------------
--------------------------------------
+
 
 #include <iostream>
 using namespace std;
@@ -4143,10 +4156,9 @@ int main() {
     
     return 0;
 }
-----------------------------------------
+
 ------------SQCQINVECTOR-----------------
 -----------------------------------------
-----------------------------------------
 
 #include <iostream>
 #include <vector>
@@ -4870,9 +4882,10 @@ int main() {
     return 0;
 }
 
--------------------------------------
-----------------adv in vector--------
+
+-------------VECTOROP-------------------
 ----------------------------------------
+
 #include <iostream>
 #include <vector>
 using namespace std;
@@ -5221,9 +5234,10 @@ int main() {
 }
 
 
+
+------------LINKEDLISTOP-----------
 ----------------------------------------
-------------linked list advanced-----------
-----------------------------------------
+
 #include <iostream>
 using namespace std;
 
@@ -5631,10 +5645,143 @@ int main() {
     return 0;
 }
 
+--------------DOUBLY--------------------
+----------------------------------------
 
--------------------------------------
---------------linkedliststackqueue----------------------
-------------------------------------
+#include <iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* prev;
+    Node* next;
+};
+
+class DoublyLL {
+public:
+    Node* head;
+    
+    DoublyLL() {
+        head = NULL;
+    }
+    
+    void insertBegin(int val) {
+        Node* newNode = new Node();
+        newNode->data = val;
+        newNode->prev = NULL;
+        newNode->next = head;
+        if (head != NULL) head->prev = newNode;
+        head = newNode;
+    }
+    
+    void insertEnd(int val) {
+        Node* newNode = new Node();
+        newNode->data = val;
+        newNode->next = NULL;
+        if (head == NULL) {
+            newNode->prev = NULL;
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next != NULL) temp = temp->next;
+        temp->next = newNode;
+        newNode->prev = temp;
+    }
+    
+    void deleteBegin() {
+        if (head == NULL) {
+            cout << "List empty" << endl;
+            return;
+        }
+        Node* temp = head;
+        head = head->next;
+        if (head != NULL) head->prev = NULL;
+        delete temp;
+    }
+    
+    void deleteEnd() {
+        if (head == NULL) {
+            cout << "List empty" << endl;
+            return;
+        }
+        if (head->next == NULL) {
+            delete head;
+            head = NULL;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next != NULL) temp = temp->next;
+        temp->prev->next = NULL;
+        delete temp;
+    }
+    
+    bool search(int val) {
+        Node* temp = head;
+        while (temp != NULL) {
+            if (temp->data == val) return true;
+            temp = temp->next;
+        }
+        return false;
+    }
+    
+    void display() {
+        if (head == NULL) {
+            cout << "List empty" << endl;
+            return;
+        }
+        Node* temp = head;
+        while (temp != NULL) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
+    }
+};
+
+int main() {
+    DoublyLL dll;
+    int choice, val;
+    
+    while (true) {
+        cout << "\n1. Insert Begin\n2. Insert End\n3. Delete Begin\n4. Delete End\n5. Search\n6. Display\n7. Exit\nChoice: ";
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                cout << "Value: ";
+                cin >> val;
+                dll.insertBegin(val);
+                break;
+            case 2:
+                cout << "Value: ";
+                cin >> val;
+                dll.insertEnd(val);
+                break;
+            case 3:
+                dll.deleteBegin();
+                break;
+            case 4:
+                dll.deleteEnd();
+                break;
+            case 5:
+                cout << "Value: ";
+                cin >> val;
+                if (dll.search(val)) cout << "Found" << endl;
+                else cout << "Not found" << endl;
+                break;
+            case 6:
+                dll.display();
+                break;
+            case 7:
+                return 0;
+        }
+    }
+}
+
+
+--------------CIRCULAR-----------------
+---------------------------------------
 
 #include <iostream>
 using namespace std;
@@ -5644,11 +5791,543 @@ struct Node {
     Node* next;
 };
 
-class StackLL {
+class CircularLL {
+public:
+    Node* tail;
+    
+    CircularLL() {
+        tail = NULL;
+    }
+    
+    void insertBegin(int val) {
+        Node* newNode = new Node();
+        newNode->data = val;
+        if (tail == NULL) {
+            tail = newNode;
+            tail->next = tail;
+            return;
+        }
+        newNode->next = tail->next;
+        tail->next = newNode;
+    }
+    
+    void insertEnd(int val) {
+        Node* newNode = new Node();
+        newNode->data = val;
+        if (tail == NULL) {
+            tail = newNode;
+            tail->next = tail;
+            return;
+        }
+        newNode->next = tail->next;
+        tail->next = newNode;
+        tail = newNode;
+    }
+    
+    void deleteBegin() {
+        if (tail == NULL) {
+            cout << "List empty" << endl;
+            return;
+        }
+        Node* head = tail->next;
+        if (head == tail) {
+            delete tail;
+            tail = NULL;
+            return;
+        }
+        tail->next = head->next;
+        delete head;
+    }
+    
+    void deleteEnd() {
+        if (tail == NULL) {
+            cout << "List empty" << endl;
+            return;
+        }
+        Node* head = tail->next;
+        if (head == tail) {
+            delete tail;
+            tail = NULL;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next != tail) temp = temp->next;
+        temp->next = head;
+        delete tail;
+        tail = temp;
+    }
+    
+    bool search(int val) {
+        if (tail == NULL) return false;
+        Node* temp = tail->next;
+        do {
+            if (temp->data == val) return true;
+            temp = temp->next;
+        } while (temp != tail->next);
+        return false;
+    }
+    
+    void display() {
+        if (tail == NULL) {
+            cout << "List empty" << endl;
+            return;
+        }
+        Node* temp = tail->next;
+        do {
+            cout << temp->data << " ";
+            temp = temp->next;
+        } while (temp != tail->next);
+        cout << endl;
+    }
+};
+
+int main() {
+    CircularLL cll;
+    int choice, val;
+    
+    while (true) {
+        cout << "\n1. Insert Begin\n2. Insert End\n3. Delete Begin\n4. Delete End\n5. Search\n6. Display\n7. Exit\nChoice: ";
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                cout << "Value: ";
+                cin >> val;
+                cll.insertBegin(val);
+                break;
+            case 2:
+                cout << "Value: ";
+                cin >> val;
+                cll.insertEnd(val);
+                break;
+            case 3:
+                cll.deleteBegin();
+                break;
+            case 4:
+                cll.deleteEnd();
+                break;
+            case 5:
+                cout << "Value: ";
+                cin >> val;
+                if (cll.search(val)) cout << "Found" << endl;
+                else cout << "Not found" << endl;
+                break;
+            case 6:
+                cll.display();
+                break;
+            case 7:
+                return 0;
+        }
+    }
+}
+
+--------------STACKOPINVECTOR--------------
+-------------------------------------------
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+class Stack {
+public:
+    vector<int> stack;
+    
+    void push(int val) {
+        stack.push_back(val);
+    }
+    
+    void pop() {
+        if (stack.empty()) {
+            cout << "Stack empty" << endl;
+            return;
+        }
+        stack.pop_back();
+    }
+    
+    void multipop(int n) {
+        if (stack.empty()) {
+            cout << "Stack empty" << endl;
+            return;
+        }
+        for (int i = 0; i < n && !stack.empty(); i++) {
+            stack.pop_back();
+        }
+    }
+    
+    void orderedPush(int val) {
+        vector<int> temp;
+        while (!stack.empty() && stack.back() > val) {
+            temp.push_back(stack.back());
+            stack.pop_back();
+        }
+        stack.push_back(val);
+        while (!temp.empty()) {
+            stack.push_back(temp.back());
+            temp.pop_back();
+        }
+    }
+    
+    void peek() {
+        if (stack.empty()) {
+            cout << "Stack empty" << endl;
+            return;
+        }
+        cout << "Top: " << stack.back() << endl;
+    }
+    
+    void display() {
+        if (stack.empty()) {
+            cout << "Stack empty" << endl;
+            return;
+        }
+        for (int i = 0; i < stack.size(); i++) {
+            cout << stack[i] << " ";
+        }
+        cout << endl;
+    }
+    
+    int top() {
+        if (stack.empty()) return -1;
+        return stack.back();
+    }
+    
+    bool isEmpty() {
+        return stack.empty();
+    }
+};
+
+class StackChar {
+public:
+    vector<char> stack;
+    
+    void push(char val) {
+        stack.push_back(val);
+    }
+    
+    void pop() {
+        if (!stack.empty()) stack.pop_back();
+    }
+    
+    char top() {
+        if (stack.empty()) return '\0';
+        return stack.back();
+    }
+    
+    bool isEmpty() {
+        return stack.empty();
+    }
+};
+
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    if (op == '^') return 3;
+    return 0;
+}
+
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+}
+
+void infixToPostfix() {
+    string infix;
+    cout << "Enter infix: ";
+    cin >> infix;
+    
+    StackChar s;
+    string postfix = "";
+    
+    for (int i = 0; i < infix.length(); i++) {
+        char c = infix[i];
+        
+        if (isalnum(c)) {
+            postfix += c;
+        } else if (c == '(') {
+            s.push(c);
+        } else if (c == ')') {
+            while (!s.isEmpty() && s.top() != '(') {
+                postfix += s.top();
+                s.pop();
+            }
+            s.pop();
+        } else if (isOperator(c)) {
+            while (!s.isEmpty() && precedence(s.top()) >= precedence(c)) {
+                postfix += s.top();
+                s.pop();
+            }
+            s.push(c);
+        }
+    }
+    
+    while (!s.isEmpty()) {
+        postfix += s.top();
+        s.pop();
+    }
+    
+    cout << "Postfix: " << postfix << endl;
+}
+
+void palindromeCheck() {
+    string str;
+    cout << "Enter string: ";
+    cin >> str;
+    
+    StackChar s;
+    for (int i = 0; i < str.length(); i++) {
+        s.push(str[i]);
+    }
+    
+    string reversed = "";
+    while (!s.isEmpty()) {
+        reversed += s.top();
+        s.pop();
+    }
+    
+    if (str == reversed) cout << "Palindrome" << endl;
+    else cout << "Not palindrome" << endl;
+}
+
+void reverseString() {
+    string str;
+    cout << "Enter string: ";
+    cin >> str;
+    
+    StackChar s;
+    for (int i = 0; i < str.length(); i++) {
+        s.push(str[i]);
+    }
+    
+    string reversed = "";
+    while (!s.isEmpty()) {
+        reversed += s.top();
+        s.pop();
+    }
+    
+    cout << "Reversed: " << reversed << endl;
+}
+
+void parenthesisMatch() {
+    string str;
+    cout << "Enter expression: ";
+    cin >> str;
+    
+    StackChar s;
+    bool balanced = true;
+    
+    for (int i = 0; i < str.length(); i++) {
+        char c = str[i];
+        if (c == '(' || c == '{' || c == '[') {
+            s.push(c);
+        } else if (c == ')' || c == '}' || c == ']') {
+            if (s.isEmpty()) {
+                balanced = false;
+                break;
+            }
+            char top = s.top();
+            if ((c == ')' && top == '(') || (c == '}' && top == '{') || (c == ']' && top == '[')) {
+                s.pop();
+            } else {
+                balanced = false;
+                break;
+            }
+        }
+    }
+    
+    if (!s.isEmpty()) balanced = false;
+    
+    if (balanced) cout << "Balanced" << endl;
+    else cout << "Not balanced" << endl;
+}
+
+void postfixEval() {
+    string postfix;
+    cout << "Enter postfix: ";
+    cin >> postfix;
+    
+    Stack s;
+    
+    for (int i = 0; i < postfix.length(); i++) {
+        char c = postfix[i];
+        
+        if (isdigit(c)) {
+            s.push(c - '0');
+        } else if (isOperator(c)) {
+            int val2 = s.top();
+            s.pop();
+            int val1 = s.top();
+            s.pop();
+            
+            if (c == '+') s.push(val1 + val2);
+            else if (c == '-') s.push(val1 - val2);
+            else if (c == '*') s.push(val1 * val2);
+            else if (c == '/') s.push(val1 / val2);
+        }
+    }
+    
+    cout << "Result: " << s.top() << endl;
+}
+
+void prefixEval() {
+    string prefix;
+    cout << "Enter prefix: ";
+    cin >> prefix;
+    
+    Stack s;
+    
+    for (int i = prefix.length() - 1; i >= 0; i--) {
+        char c = prefix[i];
+        
+        if (isdigit(c)) {
+            s.push(c - '0');
+        } else if (isOperator(c)) {
+            int val1 = s.top();
+            s.pop();
+            int val2 = s.top();
+            s.pop();
+            
+            if (c == '+') s.push(val1 + val2);
+            else if (c == '-') s.push(val1 - val2);
+            else if (c == '*') s.push(val1 * val2);
+            else if (c == '/') s.push(val1 / val2);
+        }
+    }
+    
+    cout << "Result: " << s.top() << endl;
+}
+
+void decimalToBinary() {
+    int n;
+    cout << "Enter decimal: ";
+    cin >> n;
+    
+    Stack s;
+    while (n > 0) {
+        s.push(n % 2);
+        n /= 2;
+    }
+    
+    cout << "Binary: ";
+    while (!s.isEmpty()) {
+        cout << s.top();
+        s.pop();
+    }
+    cout << endl;
+}
+
+void nextGreaterElement() {
+    int n;
+    cout << "Enter size: ";
+    cin >> n;
+    
+    vector<int> arr(n);
+    cout << "Enter elements: ";
+    for (int i = 0; i < n; i++) cin >> arr[i];
+    
+    Stack s;
+    vector<int> result(n, -1);
+    
+    for (int i = n - 1; i >= 0; i--) {
+        while (!s.isEmpty() && s.top() <= arr[i]) {
+            s.pop();
+        }
+        if (!s.isEmpty()) result[i] = s.top();
+        s.push(arr[i]);
+    }
+    
+    cout << "Next greater elements: ";
+    for (int i = 0; i < n; i++) {
+        cout << result[i] << " ";
+    }
+    cout << endl;
+}
+
+int main() {
+    Stack s;
+    int choice, val, n;
+    
+    while (true) {
+        cout << "\n1. Push\n2. Pop\n3. Multipop\n4. Ordered Push\n5. Peek\n6. Display\n7. Infix to Postfix\n8. Palindrome Check\n9. Reverse String\n10. Parenthesis Match\n11. Postfix Eval\n12. Prefix Eval\n13. Decimal to Binary\n14. Next Greater Element\n15. Exit\nChoice: ";
+        cin >> choice;
+        
+        switch (choice) {
+            case 1:
+                cout << "Value: ";
+                cin >> val;
+                s.push(val);
+                break;
+            case 2:
+                s.pop();
+                break;
+            case 3:
+                cout << "How many to pop: ";
+                cin >> n;
+                s.multipop(n);
+                break;
+            case 4:
+                cout << "Value: ";
+                cin >> val;
+                s.orderedPush(val);
+                break;
+            case 5:
+                s.peek();
+                break;
+            case 6:
+                s.display();
+                break;
+            case 7:
+                infixToPostfix();
+                break;
+            case 8:
+                palindromeCheck();
+                break;
+            case 9:
+                reverseString();
+                break;
+            case 10:
+                parenthesisMatch();
+                break;
+            case 11:
+                postfixEval();
+                break;
+            case 12:
+                prefixEval();
+                break;
+            case 13:
+                decimalToBinary();
+                break;
+            case 14:
+                nextGreaterElement();
+                break;
+            case 15:
+                return 0;
+        }
+    }
+}
+
+--------------STACKOPINLL----------------
+-----------------------------------------
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+struct NodeChar {
+    char data;
+    NodeChar* next;
+};
+
+class Stack {
 public:
     Node* top;
     
-    StackLL() {
+    Stack() {
         top = NULL;
     }
     
@@ -5657,41 +6336,65 @@ public:
         newNode->data = val;
         newNode->next = top;
         top = newNode;
-        cout << val << " pushed to stack" << endl;
     }
     
-    int pop() {
+    void pop() {
         if (top == NULL) {
-            cout << "Stack underflow" << endl;
-            return -1;
+            cout << "Stack empty" << endl;
+            return;
         }
         Node* temp = top;
-        int val = temp->data;
         top = top->next;
         delete temp;
-        return val;
     }
     
-    int peek() {
+    void multipop(int n) {
         if (top == NULL) {
-            cout << "Stack is empty" << endl;
-            return -1;
+            cout << "Stack empty" << endl;
+            return;
         }
-        return top->data;
+        for (int i = 0; i < n && top != NULL; i++) {
+            Node* temp = top;
+            top = top->next;
+            delete temp;
+        }
+    }
+    
+    void orderedPush(int val) {
+        if (top == NULL || top->data >= val) {
+            push(val);
+            return;
+        }
+        int temp = top->data;
+        pop();
+        orderedPush(val);
+        push(temp);
+    }
+    
+    void peek() {
+        if (top == NULL) {
+            cout << "Stack empty" << endl;
+            return;
+        }
+        cout << "Top: " << top->data << endl;
     }
     
     void display() {
         if (top == NULL) {
-            cout << "Stack is empty" << endl;
+            cout << "Stack empty" << endl;
             return;
         }
         Node* temp = top;
-        cout << "Stack: ";
         while (temp != NULL) {
             cout << temp->data << " ";
             temp = temp->next;
         }
         cout << endl;
+    }
+    
+    int topVal() {
+        if (top == NULL) return -1;
+        return top->data;
     }
     
     bool isEmpty() {
@@ -5699,707 +6402,329 @@ public:
     }
 };
 
-class QueueLL {
+class StackChar {
 public:
-    Node* front;
-    Node* rear;
+    NodeChar* top;
     
-    QueueLL() {
-        front = NULL;
-        rear = NULL;
+    StackChar() {
+        top = NULL;
     }
     
-    void enqueue(int val) {
-        Node* newNode = new Node();
+    void push(char val) {
+        NodeChar* newNode = new NodeChar();
         newNode->data = val;
-        newNode->next = NULL;
-        
-        if (rear == NULL) {
-            front = rear = newNode;
-        } else {
-            rear->next = newNode;
-            rear = newNode;
-        }
-        cout << val << " enqueued to queue" << endl;
+        newNode->next = top;
+        top = newNode;
     }
     
-    int dequeue() {
-        if (front == NULL) {
-            cout << "Queue underflow" << endl;
-            return -1;
+    void pop() {
+        if (top != NULL) {
+            NodeChar* temp = top;
+            top = top->next;
+            delete temp;
         }
-        Node* temp = front;
-        int val = temp->data;
-        front = front->next;
-        
-        if (front == NULL) {
-            rear = NULL;
-        }
-        
-        delete temp;
-        return val;
     }
     
-    int peek() {
-        if (front == NULL) {
-            cout << "Queue is empty" << endl;
-            return -1;
-        }
-        return front->data;
-    }
-    
-    void display() {
-        if (front == NULL) {
-            cout << "Queue is empty" << endl;
-            return;
-        }
-        Node* temp = front;
-        cout << "Queue: ";
-        while (temp != NULL) {
-            cout << temp->data << " ";
-            temp = temp->next;
-        }
-        cout << endl;
+    char topVal() {
+        if (top == NULL) return '\0';
+        return top->data;
     }
     
     bool isEmpty() {
-        return front == NULL;
+        return top == NULL;
     }
 };
 
-class CircularQueueLL {
-public:
-    Node* front;
-    Node* rear;
-    int maxSize;
-    int currentSize;
-    
-    CircularQueueLL(int size = 100) {
-        front = NULL;
-        rear = NULL;
-        maxSize = size;
-        currentSize = 0;
-    }
-    
-    void enqueue(int val) {
-        if (currentSize == maxSize) {
-            cout << "Circular queue is full" << endl;
-            return;
-        }
-        
-        Node* newNode = new Node();
-        newNode->data = val;
-        newNode->next = NULL;
-        
-        if (rear == NULL) {
-            front = rear = newNode;
-        } else {
-            rear->next = newNode;
-            rear = newNode;
-        }
-        
-        currentSize++;
-        cout << val << " enqueued to circular queue" << endl;
-    }
-    
-    int dequeue() {
-        if (currentSize == 0) {
-            cout << "Circular queue underflow" << endl;
-            return -1;
-        }
-        
-        Node* temp = front;
-        int val = temp->data;
-        front = front->next;
-        
-        if (front == NULL) {
-            rear = NULL;
-        }
-        
-        delete temp;
-        currentSize--;
-        return val;
-    }
-    
-    int peek() {
-        if (currentSize == 0) {
-            cout << "Circular queue is empty" << endl;
-            return -1;
-        }
-        return front->data;
-    }
-    
-    void display() {
-        if (currentSize == 0) {
-            cout << "Circular queue is empty" << endl;
-            return;
-        }
-        
-        Node* temp = front;
-        cout << "Circular Queue: ";
-        while (temp != NULL) {
-            cout << temp->data << " ";
-            temp = temp->next;
-        }
-        cout << endl;
-    }
-    
-    bool isEmpty() {
-        return currentSize == 0;
-    }
-    
-    bool isFull() {
-        return currentSize == maxSize;
-    }
-};
+int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/') return 2;
+    if (op == '^') return 3;
+    return 0;
+}
 
-class StackUsingQueue {
-public:
-    QueueLL q1;
-    QueueLL q2;
-    
-    void push(int val) {
-        q2.enqueue(val);
-        
-        while (!q1.isEmpty()) {
-            q2.enqueue(q1.dequeue());
-        }
-        
-        QueueLL temp = q1;
-        q1 = q2;
-        q2 = temp;
-        
-        cout << val << " pushed to stack using queue" << endl;
-    }
-    
-    int pop() {
-        if (q1.isEmpty()) {
-            cout << "Stack underflow" << endl;
-            return -1;
-        }
-        return q1.dequeue();
-    }
-    
-    int peek() {
-        return q1.peek();
-    }
-    
-    void display() {
-        q1.display();
-    }
-};
+bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
+}
 
-class QueueUsingStack {
-public:
-    StackLL s1;
-    StackLL s2;
+void infixToPostfix() {
+    string infix;
+    cout << "Enter infix: ";
+    cin >> infix;
     
-    void enqueue(int val) {
-        s1.push(val);
-        cout << val << " enqueued to queue using stack" << endl;
+    StackChar s;
+    string postfix = "";
+    
+    for (int i = 0; i < infix.length(); i++) {
+        char c = infix[i];
+        
+        if (isalnum(c)) {
+            postfix += c;
+        } else if (c == '(') {
+            s.push(c);
+        } else if (c == ')') {
+            while (!s.isEmpty() && s.topVal() != '(') {
+                postfix += s.topVal();
+                s.pop();
+            }
+            s.pop();
+        } else if (isOperator(c)) {
+            while (!s.isEmpty() && precedence(s.topVal()) >= precedence(c)) {
+                postfix += s.topVal();
+                s.pop();
+            }
+            s.push(c);
+        }
     }
     
-    int dequeue() {
-        if (s1.isEmpty() && s2.isEmpty()) {
-            cout << "Queue underflow" << endl;
-            return -1;
-        }
-        
-        if (s2.isEmpty()) {
-            while (!s1.isEmpty()) {
-                s2.push(s1.pop());
+    while (!s.isEmpty()) {
+        postfix += s.topVal();
+        s.pop();
+    }
+    
+    cout << "Postfix: " << postfix << endl;
+}
+
+void palindromeCheck() {
+    string str;
+    cout << "Enter string: ";
+    cin >> str;
+    
+    StackChar s;
+    for (int i = 0; i < str.length(); i++) {
+        s.push(str[i]);
+    }
+    
+    string reversed = "";
+    while (!s.isEmpty()) {
+        reversed += s.topVal();
+        s.pop();
+    }
+    
+    if (str == reversed) cout << "Palindrome" << endl;
+    else cout << "Not palindrome" << endl;
+}
+
+void reverseString() {
+    string str;
+    cout << "Enter string: ";
+    cin >> str;
+    
+    StackChar s;
+    for (int i = 0; i < str.length(); i++) {
+        s.push(str[i]);
+    }
+    
+    string reversed = "";
+    while (!s.isEmpty()) {
+        reversed += s.topVal();
+        s.pop();
+    }
+    
+    cout << "Reversed: " << reversed << endl;
+}
+
+void parenthesisMatch() {
+    string str;
+    cout << "Enter expression: ";
+    cin >> str;
+    
+    StackChar s;
+    bool balanced = true;
+    
+    for (int i = 0; i < str.length(); i++) {
+        char c = str[i];
+        if (c == '(' || c == '{' || c == '[') {
+            s.push(c);
+        } else if (c == ')' || c == '}' || c == ']') {
+            if (s.isEmpty()) {
+                balanced = false;
+                break;
+            }
+            char topChar = s.topVal();
+            if ((c == ')' && topChar == '(') || (c == '}' && topChar == '{') || (c == ']' && topChar == '[')) {
+                s.pop();
+            } else {
+                balanced = false;
+                break;
             }
         }
-        
-        return s2.pop();
     }
     
-    int peek() {
-        if (s1.isEmpty() && s2.isEmpty()) {
-            cout << "Queue is empty" << endl;
-            return -1;
-        }
-        
-        if (s2.isEmpty()) {
-            while (!s1.isEmpty()) {
-                s2.push(s1.pop());
-            }
-        }
-        
-        return s2.peek();
-    }
+    if (!s.isEmpty()) balanced = false;
     
-    void display() {
-        if (s1.isEmpty() && s2.isEmpty()) {
-            cout << "Queue is empty" << endl;
-            return;
-        }
-        
-        cout << "Queue using stack: ";
-        
-        StackLL tempS2 = s2;
-        Node* temp2 = tempS2.top;
-        while (temp2 != NULL) {
-            cout << temp2->data << " ";
-            temp2 = temp2->next;
-        }
-        
-        StackLL tempS1;
-        Node* temp1 = s1.top;
-        while (temp1 != NULL) {
-            tempS1.push(temp1->data);
-            temp1 = temp1->next;
-        }
-        
-        temp1 = tempS1.top;
-        while (temp1 != NULL) {
-            cout << temp1->data << " ";
-            temp1 = temp1->next;
-        }
-        cout << endl;
-    }
-};
+    if (balanced) cout << "Balanced" << endl;
+    else cout << "Not balanced" << endl;
+}
 
-class CircularQueueUsingStack {
-public:
-    StackLL s1;
-    StackLL s2;
-    int maxSize;
-    int currentSize;
+void postfixEval() {
+    string postfix;
+    cout << "Enter postfix: ";
+    cin >> postfix;
     
-    CircularQueueUsingStack(int size = 100) {
-        maxSize = size;
-        currentSize = 0;
+    Stack s;
+    
+    for (int i = 0; i < postfix.length(); i++) {
+        char c = postfix[i];
+        
+        if (isdigit(c)) {
+            s.push(c - '0');
+        } else if (isOperator(c)) {
+            int val2 = s.topVal();
+            s.pop();
+            int val1 = s.topVal();
+            s.pop();
+            
+            if (c == '+') s.push(val1 + val2);
+            else if (c == '-') s.push(val1 - val2);
+            else if (c == '*') s.push(val1 * val2);
+            else if (c == '/') s.push(val1 / val2);
+        }
     }
     
-    void enqueue(int val) {
-        if (currentSize >= maxSize) {
-            cout << "Circular queue is full" << endl;
-            return;
-        }
-        
-        s1.push(val);
-        currentSize++;
-        cout << val << " enqueued to circular queue using stack" << endl;
-    }
-    
-    int dequeue() {
-        if (currentSize == 0) {
-            cout << "Circular queue underflow" << endl;
-            return -1;
-        }
-        
-        if (s2.isEmpty()) {
-            while (!s1.isEmpty()) {
-                s2.push(s1.pop());
-            }
-        }
-        
-        currentSize--;
-        return s2.pop();
-    }
-    
-    int peek() {
-        if (currentSize == 0) {
-            cout << "Circular queue is empty" << endl;
-            return -1;
-        }
-        
-        if (s2.isEmpty()) {
-            while (!s1.isEmpty()) {
-                s2.push(s1.pop());
-            }
-        }
-        
-        return s2.peek();
-    }
-    
-    void display() {
-        if (currentSize == 0) {
-            cout << "Circular queue is empty" << endl;
-            return;
-        }
-        
-        cout << "Circular Queue using stack: ";
-        
-        StackLL tempS2 = s2;
-        Node* temp2 = tempS2.top;
-        while (temp2 != NULL) {
-            cout << temp2->data << " ";
-            temp2 = temp2->next;
-        }
-        
-        StackLL tempS1;
-        Node* temp1 = s1.top;
-        while (temp1 != NULL) {
-            tempS1.push(temp1->data);
-            temp1 = temp1->next;
-        }
-        
-        temp1 = tempS1.top;
-        while (temp1 != NULL) {
-            cout << temp1->data << " ";
-            temp1 = temp1->next;
-        }
-        cout << endl;
-    }
-};
+    cout << "Result: " << s.topVal() << endl;
+}
 
-class CircularQueueUsingQueue {
-public:
-    QueueLL q;
-    int maxSize;
-    int currentSize;
+void prefixEval() {
+    string prefix;
+    cout << "Enter prefix: ";
+    cin >> prefix;
     
-    CircularQueueUsingQueue(int size = 100) {
-        maxSize = size;
-        currentSize = 0;
-    }
+    Stack s;
     
-    void enqueue(int val) {
-        if (currentSize >= maxSize) {
-            cout << "Circular queue is full" << endl;
-            return;
-        }
+    for (int i = prefix.length() - 1; i >= 0; i--) {
+        char c = prefix[i];
         
-        q.enqueue(val);
-        currentSize++;
-        cout << val << " enqueued to circular queue using queue" << endl;
+        if (isdigit(c)) {
+            s.push(c - '0');
+        } else if (isOperator(c)) {
+            int val1 = s.topVal();
+            s.pop();
+            int val2 = s.topVal();
+            s.pop();
+            
+            if (c == '+') s.push(val1 + val2);
+            else if (c == '-') s.push(val1 - val2);
+            else if (c == '*') s.push(val1 * val2);
+            else if (c == '/') s.push(val1 / val2);
+        }
     }
     
-    int dequeue() {
-        if (currentSize == 0) {
-            cout << "Circular queue underflow" << endl;
-            return -1;
-        }
-        
-        currentSize--;
-        return q.dequeue();
+    cout << "Result: " << s.topVal() << endl;
+}
+
+void decimalToBinary() {
+    int n;
+    cout << "Enter decimal: ";
+    cin >> n;
+    
+    Stack s;
+    while (n > 0) {
+        s.push(n % 2);
+        n /= 2;
     }
     
-    int peek() {
-        if (currentSize == 0) {
-            cout << "Circular queue is empty" << endl;
-            return -1;
+    cout << "Binary: ";
+    while (!s.isEmpty()) {
+        cout << s.topVal();
+        s.pop();
+    }
+    cout << endl;
+}
+
+void nextGreaterElement() {
+    int size;
+    cout << "Enter size: ";
+    cin >> size;
+    
+    int* arr = new int[size];
+    int* result = new int[size];
+    
+    cout << "Enter elements: ";
+    for (int i = 0; i < size; i++) cin >> arr[i];
+    
+    for (int i = 0; i < size; i++) result[i] = -1;
+    
+    Stack s;
+    
+    for (int i = size - 1; i >= 0; i--) {
+        while (!s.isEmpty() && s.topVal() <= arr[i]) {
+            s.pop();
         }
-        
-        return q.peek();
+        if (!s.isEmpty()) result[i] = s.topVal();
+        s.push(arr[i]);
     }
     
-    void display() {
-        if (currentSize == 0) {
-            cout << "Circular queue is empty" << endl;
-            return;
-        }
-        q.display();
+    cout << "Next greater elements: ";
+    for (int i = 0; i < size; i++) {
+        cout << result[i] << " ";
     }
-};
+    cout << endl;
+    
+    delete[] arr;
+    delete[] result;
+}
 
 int main() {
-    int choice, val, subChoice, size;
-    
-    StackLL stack;
-    QueueLL queue;
-    CircularQueueLL* circularQueue = NULL;
-    StackUsingQueue stackUsingQueue;
-    QueueUsingStack queueUsingStack;
-    CircularQueueUsingStack* circularQueueUsingStack = NULL;
-    CircularQueueUsingQueue* circularQueueUsingQueue = NULL;
+    Stack s;
+    int choice, val, n;
     
     while (true) {
-        cout << "\n=== Data Structure Implementations ===" << endl;
-        cout << "1. Stack (Linked List)" << endl;
-        cout << "2. Queue (Linked List)" << endl;
-        cout << "3. Circular Queue (Linked List)" << endl;
-        cout << "4. Stack Using Queue" << endl;
-        cout << "5. Queue Using Stack" << endl;
-        cout << "6. Circular Queue Using Stack" << endl;
-        cout << "7. Circular Queue Using Queue" << endl;
-        cout << "8. Exit" << endl;
-        cout << "Choice: ";
+        cout << "\n1. Push\n2. Pop\n3. Multipop\n4. Ordered Push\n5. Peek\n6. Display\n7. Infix to Postfix\n8. Palindrome Check\n9. Reverse String\n10. Parenthesis Match\n11. Postfix Eval\n12. Prefix Eval\n13. Decimal to Binary\n14. Next Greater Element\n15. Exit\nChoice: ";
         cin >> choice;
         
         switch (choice) {
             case 1:
-                while (true) {
-                    cout << "\n--- Stack Operations ---" << endl;
-                    cout << "1. Push" << endl;
-                    cout << "2. Pop" << endl;
-                    cout << "3. Peek" << endl;
-                    cout << "4. Display" << endl;
-                    cout << "5. Back" << endl;
-                    cout << "Choice: ";
-                    cin >> subChoice;
-                    
-                    if (subChoice == 5) break;
-                    
-                    switch (subChoice) {
-                        case 1:
-                            cout << "Value: ";
-                            cin >> val;
-                            stack.push(val);
-                            break;
-                        case 2:
-                            val = stack.pop();
-                            if (val != -1) cout << "Popped: " << val << endl;
-                            break;
-                        case 3:
-                            val = stack.peek();
-                            if (val != -1) cout << "Top: " << val << endl;
-                            break;
-                        case 4:
-                            stack.display();
-                            break;
-                        default:
-                            cout << "Invalid choice" << endl;
-                    }
-                }
+                cout << "Value: ";
+                cin >> val;
+                s.push(val);
                 break;
-                
             case 2:
-                while (true) {
-                    cout << "\n--- Queue Operations ---" << endl;
-                    cout << "1. Enqueue" << endl;
-                    cout << "2. Dequeue" << endl;
-                    cout << "3. Peek" << endl;
-                    cout << "4. Display" << endl;
-                    cout << "5. Back" << endl;
-                    cout << "Choice: ";
-                    cin >> subChoice;
-                    
-                    if (subChoice == 5) break;
-                    
-                    switch (subChoice) {
-                        case 1:
-                            cout << "Value: ";
-                            cin >> val;
-                            queue.enqueue(val);
-                            break;
-                        case 2:
-                            val = queue.dequeue();
-                            if (val != -1) cout << "Dequeued: " << val << endl;
-                            break;
-                        case 3:
-                            val = queue.peek();
-                            if (val != -1) cout << "Front: " << val << endl;
-                            break;
-                        case 4:
-                            queue.display();
-                            break;
-                        default:
-                            cout << "Invalid choice" << endl;
-                    }
-                }
+                s.pop();
                 break;
-                
             case 3:
-                if (circularQueue == NULL) {
-                    cout << "Enter max size: ";
-                    cin >> size;
-                    circularQueue = new CircularQueueLL(size);
-                }
-                
-                while (true) {
-                    cout << "\n--- Circular Queue Operations ---" << endl;
-                    cout << "1. Enqueue" << endl;
-                    cout << "2. Dequeue" << endl;
-                    cout << "3. Peek" << endl;
-                    cout << "4. Display" << endl;
-                    cout << "5. Back" << endl;
-                    cout << "Choice: ";
-                    cin >> subChoice;
-                    
-                    if (subChoice == 5) break;
-                    
-                    switch (subChoice) {
-                        case 1:
-                            cout << "Value: ";
-                            cin >> val;
-                            circularQueue->enqueue(val);
-                            break;
-                        case 2:
-                            val = circularQueue->dequeue();
-                            if (val != -1) cout << "Dequeued: " << val << endl;
-                            break;
-                        case 3:
-                            val = circularQueue->peek();
-                            if (val != -1) cout << "Front: " << val << endl;
-                            break;
-                        case 4:
-                            circularQueue->display();
-                            break;
-                        default:
-                            cout << "Invalid choice" << endl;
-                    }
-                }
+                cout << "How many to pop: ";
+                cin >> n;
+                s.multipop(n);
                 break;
-                
             case 4:
-                while (true) {
-                    cout << "\n--- Stack Using Queue Operations ---" << endl;
-                    cout << "1. Push" << endl;
-                    cout << "2. Pop" << endl;
-                    cout << "3. Peek" << endl;
-                    cout << "4. Display" << endl;
-                    cout << "5. Back" << endl;
-                    cout << "Choice: ";
-                    cin >> subChoice;
-                    
-                    if (subChoice == 5) break;
-                    
-                    switch (subChoice) {
-                        case 1:
-                            cout << "Value: ";
-                            cin >> val;
-                            stackUsingQueue.push(val);
-                            break;
-                        case 2:
-                            val = stackUsingQueue.pop();
-                            if (val != -1) cout << "Popped: " << val << endl;
-                            break;
-                        case 3:
-                            val = stackUsingQueue.peek();
-                            if (val != -1) cout << "Top: " << val << endl;
-                            break;
-                        case 4:
-                            stackUsingQueue.display();
-                            break;
-                        default:
-                            cout << "Invalid choice" << endl;
-                    }
-                }
+                cout << "Value: ";
+                cin >> val;
+                s.orderedPush(val);
                 break;
-                
             case 5:
-                while (true) {
-                    cout << "\n--- Queue Using Stack Operations ---" << endl;
-                    cout << "1. Enqueue" << endl;
-                    cout << "2. Dequeue" << endl;
-                    cout << "3. Peek" << endl;
-                    cout << "4. Display" << endl;
-                    cout << "5. Back" << endl;
-                    cout << "Choice: ";
-                    cin >> subChoice;
-                    
-                    if (subChoice == 5) break;
-                    
-                    switch (subChoice) {
-                        case 1:
-                            cout << "Value: ";
-                            cin >> val;
-                            queueUsingStack.enqueue(val);
-                            break;
-                        case 2:
-                            val = queueUsingStack.dequeue();
-                            if (val != -1) cout << "Dequeued: " << val << endl;
-                            break;
-                        case 3:
-                            val = queueUsingStack.peek();
-                            if (val != -1) cout << "Front: " << val << endl;
-                            break;
-                        case 4:
-                            queueUsingStack.display();
-                            break;
-                        default:
-                            cout << "Invalid choice" << endl;
-                    }
-                }
+                s.peek();
                 break;
-                
             case 6:
-                if (circularQueueUsingStack == NULL) {
-                    cout << "Enter max size: ";
-                    cin >> size;
-                    circularQueueUsingStack = new CircularQueueUsingStack(size);
-                }
-                
-                while (true) {
-                    cout << "\n--- Circular Queue Using Stack Operations ---" << endl;
-                    cout << "1. Enqueue" << endl;
-                    cout << "2. Dequeue" << endl;
-                    cout << "3. Peek" << endl;
-                    cout << "4. Display" << endl;
-                    cout << "5. Back" << endl;
-                    cout << "Choice: ";
-                    cin >> subChoice;
-                    
-                    if (subChoice == 5) break;
-                    
-                    switch (subChoice) {
-                        case 1:
-                            cout << "Value: ";
-                            cin >> val;
-                            circularQueueUsingStack->enqueue(val);
-                            break;
-                        case 2:
-                            val = circularQueueUsingStack->dequeue();
-                            if (val != -1) cout << "Dequeued: " << val << endl;
-                            break;
-                        case 3:
-                            val = circularQueueUsingStack->peek();
-                            if (val != -1) cout << "Front: " << val << endl;
-                            break;
-                        case 4:
-                            circularQueueUsingStack->display();
-                            break;
-                        default:
-                            cout << "Invalid choice" << endl;
-                    }
-                }
+                s.display();
                 break;
-                
             case 7:
-                if (circularQueueUsingQueue == NULL) {
-                    cout << "Enter max size: ";
-                    cin >> size;
-                    circularQueueUsingQueue = new CircularQueueUsingQueue(size);
-                }
-                
-                while (true) {
-                    cout << "\n--- Circular Queue Using Queue Operations ---" << endl;
-                    cout << "1. Enqueue" << endl;
-                    cout << "2. Dequeue" << endl;
-                    cout << "3. Peek" << endl;
-                    cout << "4. Display" << endl;
-                    cout << "5. Back" << endl;
-                    cout << "Choice: ";
-                    cin >> subChoice;
-                    
-                    if (subChoice == 5) break;
-                    
-                    switch (subChoice) {
-                        case 1:
-                            cout << "Value: ";
-                            cin >> val;
-                            circularQueueUsingQueue->enqueue(val);
-                            break;
-                        case 2:
-                            val = circularQueueUsingQueue->dequeue();
-                            if (val != -1) cout << "Dequeued: " << val << endl;
-                            break;
-                        case 3:
-                            val = circularQueueUsingQueue->peek();
-                            if (val != -1) cout << "Front: " << val << endl;
-                            break;
-                        case 4:
-                            circularQueueUsingQueue->display();
-                            break;
-                        default:
-                            cout << "Invalid choice" << endl;
-                    }
-                }
+                infixToPostfix();
                 break;
-                
             case 8:
-                if (circularQueue != NULL) delete circularQueue;
-                if (circularQueueUsingStack != NULL) delete circularQueueUsingStack;
-                if (circularQueueUsingQueue != NULL) delete circularQueueUsingQueue;
+                palindromeCheck();
+                break;
+            case 9:
+                reverseString();
+                break;
+            case 10:
+                parenthesisMatch();
+                break;
+            case 11:
+                postfixEval();
+                break;
+            case 12:
+                prefixEval();
+                break;
+            case 13:
+                decimalToBinary();
+                break;
+            case 14:
+                nextGreaterElement();
+                break;
+            case 15:
                 return 0;
-                
-            default:
-                cout << "Invalid choice" << endl;
         }
     }
-    
-    return 0;
 }
+
+-------------END--------------------
